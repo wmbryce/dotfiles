@@ -14,6 +14,33 @@ fi
 #                               Aliases                                       #
 ###############################################################################
 
-alias -g ll="ls -la"
-alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
+alias -g ll="ls -lah";
+alias -g ..="cd ../";
+alias -g ..l="cd ../&&ll";
+alias refresh="source .zshrc";
+alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME";
+alias build-app="npx react-native run-ios";
 
+# Pyenv setup
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/__tabtab.zsh ]] && . ~/.config/tabtab/__tabtab.zsh || true
+
+###############################################################################
+#                               Exports                                       #
+###############################################################################
+
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$HOME/.emacs.d/bin
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# Created by `userpath` on 2020-09-06 02:15:39
+export PATH="$PATH:/Users/williambryce/.local/bin"
