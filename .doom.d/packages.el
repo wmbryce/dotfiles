@@ -20,6 +20,8 @@
 (package! yaml-mode
   :recipe (:host github :repo "yoshiki/yaml-mode"))
 
+(package! json-mode
+  :recipe (:host github :repo "joshwnj/json-mode"))
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
 

@@ -53,3 +53,6 @@
 ;; they are implemented.
 (use-package! yaml-mode
   :mode "\\.yml$")
+
+(use-package! json-mode
+  :mode "\\.json$")
