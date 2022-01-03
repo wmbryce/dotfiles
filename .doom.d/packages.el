@@ -22,7 +22,14 @@
 
 (package! json-mode
   :recipe (:host github :repo "joshwnj/json-mode"))
-;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
+
+(package! org-roam)
+;(package! gratitude-journal
+;  :recipe (:host github :repo "wmbryce/gratitude-journal" :files ("gratitude-journal.el")))
+
+(add-load-path! "lisp/gratitude-journal")
+
+; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
 
 ;; To install a package directly from a particular repo, you'll need to specify

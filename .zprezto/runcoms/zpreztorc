@@ -38,18 +38,14 @@ zstyle ':prezto:load' pmodule \
   'editor' \
   'history' \
   'directory' \
-  'spectrum' \
   'utility' \
   'git' \
-  'syntax-highlighting' \
+  'spectrum' \
   'completion' \
   'prompt' \
+  'syntax-highlighting' \
   'history-substring-search'\
 
-#
-#
-#
-#
 
 #
 # Autosuggestions
@@ -189,7 +185,7 @@ zstyle ':prezto:module:prompt' theme 'sorin'
 # Set syntax highlighting styles.
  zstyle ':prezto:module:syntax-highlighting' styles \
    'builtin' 'bg=blue' \
-   'command' 'bg=blue' \
+   'command' 'bg=magenta' \
    'function' 'bg=blue'
 #
 # Set syntax pattern styles.
