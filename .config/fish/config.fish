@@ -1,0 +1,60 @@
+set fish_greeting ""
+
+set -gx TERM xterm-256color
+
+# theme
+starship init fish | source
+
+# aliases
+alias ls "ls -p -G"
+alias la "ls -A"
+alias ll "ls -lah"
+alias lla "ll -A"
+alias g git
+command -qv nvim && alias vim nvim
+
+set -gx EDITOR nvim
+
+set -gx PATH bin $PATH
+set -gx PATH ~/bin $PATH
+set -gx PATH ~/.local/bin $PATH
+set -gx PATH /opt/homebrew/bin $PATH
+
+# NodeJS
+set -gx PATH node_modules/.bin $PATH
+
+# Go
+set -g GOPATH $HOME/go
+set -gx PATH $GOPATH/bin $PATH
+
+switch (uname)
+    case Darwin
+        source (dirname (status --current-filename))/config-osx.fish
+    case Linux
+        source (dirname (status --current-filename))/config-linux.fish
+    case '*'
+        source (dirname (status --current-filename))/config-windows.fish
+end
+
+set LOCAL_CONFIG (dirname (status --current-filename))/config-local.fish
+if test -f $LOCAL_CONFIG
+    source $LOCAL_CONFIG
+end
+
+function fish_user_key_bindings
+    bind \t accept-autosuggestion
+end
+
+function tmux_auto_start
+    # Check if we're in an interactive shell
+    if status is-interactive
+        # Check if we're not already inside a tmux session
+        and not set -q TMUX
+        # Check if tmux is installed
+        and command -v tmux >/dev/null
+        # Start a new tmux session or attach to an existing one
+        exec tmux new-session -A -s main
+    end
+end
+
+tmux_auto_start
