@@ -14,12 +14,37 @@ These configurations are tailored to my workflow and preferences, primarily focu
 ## Installation
 
 - Clone the repository to your home directory
-- Install [Neovim](https://github.com/neovim/neovim/wiki/Installing-Neovim) and [tmux](https://github.com/tmux/tmux/wiki)
-- Install [nvm](https://github.com/nvm-sh/nvm) and [pyenv](https://github.com/pyenv/pyenv)
+
+- Symlink the .config file to your home directory
+  `ln -s ~/dotfiles/.config ~/.config`
+
 - Install [Fish](https://fishshell.com/docs/current/install.html)
+  `brew install fish`
+
 - Install [Fisher](https://github.com/jorgebucaran/fisher)
+  `curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher`
+
 - Install [Starship](https://starship.rs/)
+  `brew install starship`
+
+- Make fish your default shell
+  `echo /usr/local/bin/fish | sudo tee -a /etc/shells`
+  `chsh -s /usr/local/bin/fish`
+
+
+- Install [Neovim](https://github.com/neovim/neovim/wiki/Installing-Neovim)
+  `brew install neovim`
+
+- Install [tmux](https://github.com/tmux/tmux/wiki)
+  `brew install tmux`
+  - Install [tpm](https://github.com/tmux-plugins/tpm)
+  `brew install tpm`
+
+
+- Install [nvm](https://github.com/nvm-sh/nvm) and [pyenv](https://github.com/pyenv/pyenv)
 - Symlink the .config directory to your home directory
+-`ln -s ./.config ~/.config`
+-
 
 ## Components
 

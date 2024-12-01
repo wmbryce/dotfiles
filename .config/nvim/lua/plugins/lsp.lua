@@ -129,7 +129,15 @@ return {
         -- Conform will run multiple formatters sequentially
         go = { "goimports", "gofmt" },
         -- Use a sub-list to run only the first available formatter
-        javascript = { { "prettierd", "prettier" } },
+        javascript = { "prettier" },
+        typescript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescriptreact = { "prettier" },
+        css = { "prettier" },
+        html = { "prettier" },
+        json = { "prettier" },
+        yaml = { "prettier" },
+        markdown = { "prettier" },
         -- You can use a function here to determine the formatters dynamically
         python = function(bufnr)
           if require("conform").get_formatter_info("ruff_format", bufnr).available then
@@ -150,7 +158,7 @@ return {
       format_on_save = {
         -- I recommend these options. See :help conform.format for details.
         lsp_format = "fallback",
-        timeout_ms = 500,
+        timeout_ms = 1500,
       },
       -- If this is set, Conform will run the formatter asynchronously after save.
       -- It will pass the table to conform.format().

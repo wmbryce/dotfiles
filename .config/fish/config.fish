@@ -1,3 +1,18 @@
+# Reset PATH to a basic default
+set -gx PATH /usr/local/bin /usr/bin /bin /usr/sbin /sbin
+
+# Add Homebrew paths (adjust if your Homebrew is installed elsewhere)
+set -gx PATH /opt/homebrew/bin /opt/homebrew/sbin $PATH
+
+# Add your other paths
+set -gx PATH $HOME/bin $PATH
+set -gx PATH $HOME/.local/bin $PATH
+set -gx PATH node_modules/.bin $PATH
+
+# Go paths
+set -g GOPATH $HOME/go
+set -gx PATH $GOPATH/bin $PATH
+
 set fish_greeting ""
 
 set -gx TERM xterm-256color
@@ -10,15 +25,11 @@ alias ls "ls -p -G"
 alias la "ls -A"
 alias ll "ls -lah"
 alias lla "ll -A"
+alias python python3
 alias g git
 command -qv nvim && alias vim nvim
 
 set -gx EDITOR nvim
-
-set -gx PATH bin $PATH
-set -gx PATH ~/bin $PATH
-set -gx PATH ~/.local/bin $PATH
-set -gx PATH /opt/homebrew/bin $PATH
 
 # NodeJS
 set -gx PATH node_modules/.bin $PATH
@@ -45,6 +56,7 @@ function fish_user_key_bindings
     bind \t accept-autosuggestion
 end
 
+
 function tmux_auto_start
     # Check if we're in an interactive shell
     if status is-interactive
@@ -57,4 +69,5 @@ function tmux_auto_start
     end
 end
 
-tmux_auto_start
+# tmux_auto_start
+set --universal nvm_default_version v22.5.1
