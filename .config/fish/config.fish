@@ -69,5 +69,4 @@ function tmux_auto_start
     end
 end
 
-# tmux_auto_start
-set --universal nvm_default_version v22.5.1
+nvm -s use latest

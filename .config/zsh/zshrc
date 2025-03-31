@@ -1,0 +1,165 @@
+# .zshrc - Z Shell configuration file
+
+# Ensure this file is being loaded
+if [[ -o interactive ]]; then
+  echo "Loading .zshrc configuration..."
+fi
+
+# === Basic Settings ===
+# Set history settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+setopt sharehistory
+setopt incappendhistory
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_space
+
+# Basic behavior tweaks
+setopt autocd
+setopt extendedglob
+setopt nomatch
+setopt notify
+unsetopt beep
+
+# === Autocompletion ===
+# Initialize autocompletion
+autoload -Uz compinit
+compinit
+
+# Completion settings
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*' group-name ''
+
+# === Key Bindings ===
+# Use emacs keybindings
+bindkey -e
+
+# Keybindings for history navigation
+bindkey '^[[A' up-line-or-history
+bindkey '^[[B' down-line-or-history
+bindkey '^R' history-incremental-search-backward
+
+# === Aliases ===
+# Navigation
+alias ls='ls --color=auto'
+alias ll='ls -lh'
+alias la='ls -lah'
+alias lt='ls -ltr'
+alias l='ls -CF'
+
+# Common utilities
+alias grep='grep --color=auto'
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='rm -i'
+alias md='mkdir -p'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias glog='git log --oneline --graph --decorate'
+
+# System info
+alias df='df -h'
+alias du='du -h'
+alias free='free -m'
+
+# === Prompt ===
+# Load prompt system
+autoload -Uz promptinit
+promptinit
+
+# Simple prompt that shows username, hostname, and current directory
+PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
+
+# Add git status to prompt if vcs_info is available
+autoload -Uz vcs_info
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
+setopt prompt_subst
+RPROMPT='${vcs_info_msg_0_}'
+
+# === Environment Variables ===
+export EDITOR='vim'
+export VISUAL='vim'
+export PAGER='less'
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# Add local bin directory to PATH
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
+
+# Initialize NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Add Starship prompt
+eval "$(starship init zsh)"
+
+# === Plugin Management ===
+# Uncomment and modify these lines if you want to use a plugin manager
+# For example, with zplug:
+# if [[ -f ~/.zplug/init.zsh ]]; then
+#   source ~/.zplug/init.zsh
+#   zplug "zsh-users/zsh-syntax-highlighting"
+#   zplug "zsh-users/zsh-autosuggestions"
+#   zplug "zsh-users/zsh-completions"
+#   zplug load
+# fi
+
+# === Custom Functions ===
+# Extract various compressed file types
+extract() {
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1     ;;
+      *.tar.gz)    tar xzf $1     ;;
+      *.bz2)       bunzip2 $1     ;;
+      *.rar)       unrar e $1     ;;
+      *.gz)        gunzip $1      ;;
+      *.tar)       tar xf $1      ;;
+      *.tbz2)      tar xjf $1     ;;
+      *.tgz)       tar xzf $1     ;;
+      *.zip)       unzip $1       ;;
+      *.Z)         uncompress $1  ;;
+      *.7z)        7z x $1        ;;
+      *)           echo "'$1' cannot be extracted via extract()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# Create and cd into a directory
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
+# === Additional Customizations ===
+# You can add your additional customizations, paths, or source other files here
+#
+#
+
+# Source local config if exists
+if [[ -f ~/.zshrc.local ]]; then
+  source ~/.zshrc.local
+fi
