@@ -51,7 +51,7 @@ bindkey '^R' history-incremental-search-backward
 # === Aliases ===
 # Navigation
 alias ls='ls --color=auto'
-alias ll='ls -lh'
+alias ll='ls -lah'
 alias la='ls -lah'
 alias lt='ls -ltr'
 alias l='ls -CF'
