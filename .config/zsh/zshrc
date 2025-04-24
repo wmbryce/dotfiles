@@ -1,10 +1,5 @@
 # .zshrc - Z Shell configuration file
 
-# Ensure this file is being loaded
-if [[ -o interactive ]]; then
-  echo "Loading .zshrc configuration..."
-fi
-
 # === Basic Settings ===
 # Set history settings
 HISTFILE=~/.zsh_history
@@ -102,15 +97,17 @@ export PAGER='less'
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+HOMEBREW_PREFIX="/opt/homebrew/bin"
+
 # Add local bin directory to PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/usr/local/bin:$PATH"
 
 # Initialize NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+ export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Add Starship prompt
 eval "$(starship init zsh)"
@@ -118,13 +115,16 @@ eval "$(starship init zsh)"
 # === Plugin Management ===
 # Uncomment and modify these lines if you want to use a plugin manager
 # For example, with zplug:
-# if [[ -f ~/.zplug/init.zsh ]]; then
-#   source ~/.zplug/init.zsh
-#   zplug "zsh-users/zsh-syntax-highlighting"
-#   zplug "zsh-users/zsh-autosuggestions"
-#   zplug "zsh-users/zsh-completions"
-#   zplug load
-# fi
+export ZPLUG_HOME=/opt/homebrew/opt/zplug
+
+if [[ -f $ZPLUG_HOME/init.zsh ]]; then
+  echo "Loading zplug"
+  source $ZPLUG_HOME/init.zsh
+  zplug "zsh-users/zsh-syntax-highlighting"
+  zplug "zsh-users/zsh-autosuggestions"
+  zplug "zsh-users/zsh-completions"
+  zplug load
+fi
 
 # === Custom Functions ===
 # Extract various compressed file types
@@ -163,3 +163,10 @@ mkcd() {
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
+
+# bun completions
+[ -s "/Users/williambryce/.bun/_bun" ] && source "/Users/williambryce/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
