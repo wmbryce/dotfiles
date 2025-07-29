@@ -1,0 +1,37 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = Michael Bryce
+	email = michael@wmbryce.dev
+
+[core]
+	editor = nvim
+	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+	pager = delta
+
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	renames = true
+	tool = nvimdiff
+
+[column]
+	ui = auto
+
+[init]
+	defaultBranch = master
+
+[checkout]
+	defaultRemote = origin
+
+[push]
+	autoSetupRemote = true
+	followTags = true
+
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+
+[alias]
+  a = add --all
