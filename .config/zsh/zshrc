@@ -1,6 +1,9 @@
 # .zshrc - Z Shell configuration file
 
 # === Basic Settings ===
+# Source local configuration if it exists
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
 # Set history settings
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
@@ -42,6 +45,10 @@ bindkey -e
 bindkey '^[[A' up-line-or-history
 bindkey '^[[B' down-line-or-history
 bindkey '^R' history-incremental-search-backward
+
+# Keybindings for kubectl
+alias k=kubectl
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 
 # === Aliases ===
 # Navigation
