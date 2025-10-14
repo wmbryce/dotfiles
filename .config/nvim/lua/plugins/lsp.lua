@@ -1,6 +1,6 @@
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
         "stylua",
@@ -155,11 +155,11 @@ return {
       -- If this is set, Conform will run the formatter on save.
       -- It will pass the table to conform.format().
       -- This can also be a function that returns the table.
-      format_on_save = {
-        -- I recommend these options. See :help conform.format for details.
-        lsp_format = "fallback",
-        timeout_ms = 1500,
-      },
+      -- format_on_save = {
+      --   -- I recommend these options. See :help conform.format for details.
+      --   lsp_format = "fallback",
+      --   timeout_ms = 1500,
+      -- },
       -- If this is set, Conform will run the formatter asynchronously after save.
       -- It will pass the table to conform.format().
       -- This can also be a function that returns the table.

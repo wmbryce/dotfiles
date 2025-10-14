@@ -1,4 +1,4 @@
-#files: 966	version: 5.9
+#files: 976	version: 5.9
 
 _comps=(
 '-' '_precommand'
@@ -199,6 +199,7 @@ _comps=(
 'bpython3-gtk' '_bpython'
 'bpython3-urwid' '_bpython'
 'brctl' '_brctl'
+'brew' '_brew'
 'bsdconfig' '_bsdconfig'
 'bsdgrep' '_grep'
 'bsdinstall' '_bsdinstall'
@@ -218,6 +219,7 @@ _comps=(
 'bug' '_bug'
 'buildhash' '_ispell'
 'builtin' '_builtin'
+'bun' '_bun'
 'bunzip2' '_bzip2'
 'burst' '_mh'
 'bzcat' '_bzip2'
@@ -232,6 +234,7 @@ _comps=(
 'caffeinate' '_caffeinate'
 'cal' '_cal'
 'calendar' '_calendar'
+'cargo' '_cargo'
 'cat' '_cat'
 'catchsegv' '_precommand'
 'cc' '_gcc'
@@ -468,6 +471,7 @@ _comps=(
 'fc' '_fc'
 'fc-list' '_xft_fonts'
 'fc-match' '_xft_fonts'
+'fd' '_fd'
 'feh' '_feh'
 'fetch' '_fetch'
 'fetchmail' '_fetchmail'
@@ -578,16 +582,12 @@ _comps=(
 'ggv' '_gnome-gv'
 'ghead' '_head'
 'ghostscript' '_ghostscript'
+'ghostty' '_ghostty'
 'ghostview' '_pspdf'
 'gid' '_id'
 'ginstall' '_install'
 'git' '_git'
 'git-buildpackage' '_git-buildpackage'
-'git-cvsserver' '_git'
-'git-receive-pack' '_git'
-'git-shell' '_git'
-'git-upload-archive' '_git'
-'git-upload-pack' '_git'
 'gitk' '_git'
 'gjoin' '_join'
 'glance' '_openstack'
@@ -852,6 +852,7 @@ _comps=(
 'locale' '_locale'
 'localedef' '_localedef'
 'locate' '_locate'
+'log' '_nothing'
 'logger' '_logger'
 'logname' '_nothing'
 'look' '_look'
@@ -1117,6 +1118,7 @@ _comps=(
 'pinfo' '_texinfo'
 'ping' '_ping'
 'ping6' '_ping'
+'pipx' '_pipx'
 'piuparts' '_piuparts'
 'pkg' '_pkg5'
 'pkg-config' '_pkg-config'
@@ -1144,6 +1146,7 @@ _comps=(
 'pmls' '_perl_modules'
 'pmpath' '_perl_modules'
 'pmvers' '_perl_modules'
+'pnpm' '_pnpm'
 'podgrep' '_perl_modules'
 'podpath' '_perl_modules'
 'podtoc' '_perl_modules'
@@ -1245,6 +1248,7 @@ _comps=(
 'reprepro' '_reprepro'
 'restart' '_initctl'
 'retawq' '_webbrowser'
+'rg' '_rg'
 'rgrep' '_grep'
 'rgview' '_vim'
 'rgvim' '_vim'
@@ -1384,6 +1388,7 @@ _comps=(
 'ssh-keyscan' '_ssh'
 'sshfs' '_sshfs'
 'star' '_tar'
+'starship' '_starship'
 'start' '_initctl'
 'stat' '_stat'
 'status' '_initctl'
@@ -1452,7 +1457,6 @@ _comps=(
 'texindex' '_texinfo'
 'tg' '_topgit'
 'tidy' '_tidy'
-'tig' '_git'
 'time' '_precommand'
 'timeout' '_timeout'
 'times' '_nothing'
@@ -1838,7 +1842,9 @@ bindkey '^[,' _history-complete-newer
 bindkey '^[/' _history-complete-older
 bindkey '^[~' _bash_complete-word
 
-autoload -Uz _SUSEconfig __arguments _a2ps _a2utils _aap \
+autoload -Uz _brew _bun _cargo _fd _ghostty \
+            _git _pipx _pnpm _rg _starship \
+            _SUSEconfig __arguments _a2ps _a2utils _aap \
             _abcde _absolute_command_paths _ack _acpi _acpitool \
             _acroread _adb _add-zle-hook-widget _add-zsh-hook _alias \
             _aliases _all_labels _all_matches _alsa-utils _alternative \
