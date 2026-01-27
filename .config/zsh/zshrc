@@ -6,7 +6,7 @@ if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ -t 0 ]] && [[ "$TERM_PR
 fi
 
 # === PATH Configuration (consolidated) ===
-export PATH="$HOME/.bun/bin:$HOME/.local/bin:$HOME/go/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/go/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 # === NVM (lazy loaded for fast startup) ===
 export NVM_DIR="$HOME/.nvm"
@@ -20,10 +20,6 @@ nvm() {
   [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
   nvm "$@"
 }
-
-# === Bun ===
-export BUN_INSTALL="$HOME/.bun"
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 
 # === History Settings ===
 HISTFILE=~/.zsh_history
