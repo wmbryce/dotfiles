@@ -1,7 +1,5 @@
 # .zshrc - Z Shell configuration file
 
-echo "Loading .zshrc - Login: $0, Interactive: $-, TTY: $(tty)"
-
 # === Basic Settings ===
 # Source local configuration if it exists
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
@@ -25,9 +23,13 @@ setopt notify
 unsetopt beep
 
 # === Autocompletion ===
-# Initialize autocompletion
+# Initialize autocompletion with cache checking (only rebuild once per day)
 autoload -Uz compinit
-compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 
 # Completion settings
 zstyle ':completion:*' menu select
@@ -48,9 +50,16 @@ bindkey '^[[A' up-line-or-history
 bindkey '^[[B' down-line-or-history
 bindkey '^R' history-incremental-search-backward
 
-# Keybindings for kubectl
-alias k=kubectl
-[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+# Keybindings for kubectl - lazy load completion for speed
+if [[ $commands[kubectl] ]]; then
+  alias k=kubectl
+  # Lazy load kubectl completion on first use
+  kubectl() {
+    unfunction kubectl
+    source <(command kubectl completion zsh)
+    kubectl "$@"
+  }
+fi
 
 # === Aliases ===
 # Navigation
@@ -110,13 +119,44 @@ HOMEBREW_PREFIX="/opt/homebrew/bin"
 
 # Add local bin directory to PATH
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/usr/local/bin:$PATH"
 
-# Initialize NVM
-   export NVM_DIR="$HOME/.nvm"
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+# Initialize NVM with lazy loading for faster startup
+export NVM_DIR="$HOME/.nvm"
+
+# Lazy load NVM - only load when node/npm/nvm commands are used
+if [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
+  # Create placeholder functions that load NVM on first use
+  nvm() {
+    unfunction nvm node npm npx 2>/dev/null
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
+    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+    nvm "$@"
+  }
+
+  node() {
+    unfunction nvm node npm npx 2>/dev/null
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
+    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+    node "$@"
+  }
+
+  npm() {
+    unfunction nvm node npm npx 2>/dev/null
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
+    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+    npm "$@"
+  }
+
+  npx() {
+    unfunction nvm node npm npx 2>/dev/null
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
+    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+    npx "$@"
+  }
+fi
 
 # Add Starship prompt
 eval "$(starship init zsh)"
@@ -127,11 +167,17 @@ eval "$(starship init zsh)"
 export ZPLUG_HOME=/opt/homebrew/opt/zplug
 
 if [[ -f $ZPLUG_HOME/init.zsh ]]; then
-  echo "Loading zplug"
   source $ZPLUG_HOME/init.zsh
-  zplug "zsh-users/zsh-syntax-highlighting"
-  zplug "zsh-users/zsh-autosuggestions"
-  zplug "zsh-users/zsh-completions"
+  zplug "zsh-users/zsh-syntax-highlighting", defer:2
+  zplug "zsh-users/zsh-autosuggestions", defer:2
+  zplug "zsh-users/zsh-completions", defer:2
+
+  # Install plugins if not installed (skip check on every startup)
+  if ! zplug check --verbose; then
+    zplug install
+  fi
+
+  # Load plugins asynchronously when possible
   zplug load
 fi
 
