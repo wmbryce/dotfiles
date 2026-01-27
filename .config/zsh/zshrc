@@ -1,29 +1,60 @@
 # .zshrc - Z Shell configuration file
 
-# === Basic Settings ===
-# Source local configuration if it exists
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+# === Tmux Auto-attach ===
+if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ -t 0 ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
+  tmux attach -t default 2>/dev/null || tmux new -s default
+fi
 
-# Set history settings
+# === PATH Configuration (consolidated) ===
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:$HOME/go/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+# === NVM (lazy loaded for fast startup) ===
+export NVM_DIR="$HOME/.nvm"
+if [[ -f "$NVM_DIR/alias/default" ]]; then
+  DEFAULT_NODE_VER=$(cat "$NVM_DIR/alias/default")
+  [[ "$DEFAULT_NODE_VER" == "node" ]] && DEFAULT_NODE_VER=$(ls -1 "$NVM_DIR/versions/node" | sort -V | tail -1)
+  export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VER/bin:$PATH"
+fi
+nvm() {
+  unset -f nvm
+  [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
+  nvm "$@"
+}
+
+# === Bun ===
+export BUN_INSTALL="$HOME/.bun"
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+
+# === History Settings ===
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=50000
+SAVEHIST=50000
 setopt appendhistory
 setopt sharehistory
 setopt incappendhistory
 setopt hist_ignore_all_dups
 setopt hist_save_no_dups
 setopt hist_ignore_space
+setopt hist_verify            # Show command before executing from history
 
-# Basic behavior tweaks
-setopt autocd
-setopt extendedglob
+# === Shell Options ===
+setopt autocd                 # cd by typing directory name
+setopt autopushd              # Push directories onto stack
+setopt pushdignoredups        # Don't push duplicates
+setopt extendedglob           # Extended globbing
 setopt nomatch
 setopt notify
+setopt interactive_comments   # Allow comments in interactive shell
 unsetopt beep
 
+# === Environment Variables ===
+export EDITOR='vim'
+export VISUAL='vim'
+export PAGER='less'
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 # === Autocompletion ===
-# Initialize autocompletion with cache checking (only rebuild once per day)
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
   compinit
@@ -31,39 +62,23 @@ else
   compinit -C
 fi
 
-# Completion settings
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*:descriptions' format '%B%d%b'
-zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
 zstyle ':completion:*' group-name ''
 
 # === Key Bindings ===
-# Use emacs keybindings
-bindkey -e
-
-# Keybindings for history navigation
-bindkey '^[[A' up-line-or-history
-bindkey '^[[B' down-line-or-history
+bindkey -e                              # Emacs keybindings
+bindkey '^[[A' history-search-backward  # Up arrow: search history backward
+bindkey '^[[B' history-search-forward   # Down arrow: search history forward
 bindkey '^R' history-incremental-search-backward
 
-# Keybindings for kubectl - lazy load completion for speed
-if [[ $commands[kubectl] ]]; then
-  alias k=kubectl
-  # Lazy load kubectl completion on first use
-  kubectl() {
-    unfunction kubectl
-    source <(command kubectl completion zsh)
-    kubectl "$@"
-  }
-fi
-
 # === Aliases ===
-# Navigation
-alias ls='ls --color=auto'
+# Navigation (macOS compatible)
+alias ls='ls -G'
 alias ll='ls -lah'
 alias la='ls -lah'
 alias lt='ls -ltr'
@@ -88,103 +103,43 @@ alias gl='git pull'
 alias gd='git diff'
 alias glog='git log --oneline --graph --decorate'
 
-# System info
+# System info (macOS compatible)
 alias df='df -h'
 alias du='du -h'
-alias free='free -m'
 
-# === Prompt ===
-# Load prompt system
-autoload -Uz promptinit
-promptinit
+# Directory stack navigation
+alias d='dirs -v'
+alias 1='cd -1'
+alias 2='cd -2'
+alias 3='cd -3'
 
-# Simple prompt that shows username, hostname, and current directory
-PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
-
-# Add git status to prompt if vcs_info is available
-autoload -Uz vcs_info
-precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
-setopt prompt_subst
-RPROMPT='${vcs_info_msg_0_}'
-
-# === Environment Variables ===
-export EDITOR='vim'
-export VISUAL='vim'
-export PAGER='less'
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
-HOMEBREW_PREFIX="/opt/homebrew/bin"
-
-# Add local bin directory to PATH
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/go/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/usr/local/bin:$PATH"
-
-# Initialize NVM with lazy loading for faster startup
-export NVM_DIR="$HOME/.nvm"
-
-# Lazy load NVM - only load when node/npm/nvm commands are used
-if [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
-  # Create placeholder functions that load NVM on first use
-  nvm() {
-    unfunction nvm node npm npx 2>/dev/null
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
-    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-    nvm "$@"
-  }
-
-  node() {
-    unfunction nvm node npm npx 2>/dev/null
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
-    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-    node "$@"
-  }
-
-  npm() {
-    unfunction nvm node npm npx 2>/dev/null
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
-    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-    npm "$@"
-  }
-
-  npx() {
-    unfunction nvm node npm npx 2>/dev/null
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
-    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-    npx "$@"
+# === Kubectl (lazy loaded) ===
+if [[ $commands[kubectl] ]]; then
+  alias k=kubectl
+  kubectl() {
+    unfunction kubectl
+    source <(command kubectl completion zsh)
+    kubectl "$@"
   }
 fi
 
-# Add Starship prompt
-eval "$(starship init zsh)"
-
-# === Plugin Management ===
-# Uncomment and modify these lines if you want to use a plugin manager
-# For example, with zplug:
+# === Plugins (zplug) ===
 export ZPLUG_HOME=/opt/homebrew/opt/zplug
-
 if [[ -f $ZPLUG_HOME/init.zsh ]]; then
   source $ZPLUG_HOME/init.zsh
   zplug "zsh-users/zsh-syntax-highlighting", defer:2
   zplug "zsh-users/zsh-autosuggestions", defer:2
   zplug "zsh-users/zsh-completions", defer:2
-
-  # Install plugins if not installed (skip check on every startup)
-  if ! zplug check --verbose; then
-    zplug install
-  fi
-
-  # Load plugins asynchronously when possible
   zplug load
 fi
+
+# === Prompt (Starship) ===
+eval "$(starship init zsh)"
 
 # === Custom Functions ===
 # Extract various compressed file types
 extract() {
-  if [ -f $1 ] ; then
+  if [[ -f $1 ]]; then
     case $1 in
       *.tar.bz2)   tar xjf $1     ;;
       *.tar.gz)    tar xzf $1     ;;
@@ -209,19 +164,5 @@ mkcd() {
   mkdir -p "$1" && cd "$1"
 }
 
-# === Additional Customizations ===
-# You can add your additional customizations, paths, or source other files here
-#
-#
-
-# Source local config if exists
-if [[ -f ~/.zshrc.local ]]; then
-  source ~/.zshrc.local
-fi
-
-# bun completions
-[ -s "/Users/williambryce/.bun/_bun" ] && source "/Users/williambryce/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+# === Local Overrides ===
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
