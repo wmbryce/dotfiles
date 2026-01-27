@@ -129,6 +129,9 @@ if [[ -f $ZPLUG_HOME/init.zsh ]]; then
   zplug load
 fi
 
+# === FZF ===
+source <(fzf --zsh)
+
 # === Prompt (Starship) ===
 eval "$(starship init zsh)"
 
