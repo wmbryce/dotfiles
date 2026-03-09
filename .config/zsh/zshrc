@@ -1,7 +1,7 @@
 # .zshrc - Z Shell configuration file
 
 # === Tmux Auto-attach ===
-if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ -t 0 ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
+if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ -t 0 ]] && [[ -t 1 ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
   tmux attach -t default 2>/dev/null || tmux new -s default
 fi
 
@@ -12,12 +12,16 @@ export PATH="$HOME/.local/bin:$HOME/go/bin:/opt/homebrew/bin:/usr/local/bin:$PAT
 export NVM_DIR="$HOME/.nvm"
 if [[ -f "$NVM_DIR/alias/default" ]]; then
   DEFAULT_NODE_VER=$(cat "$NVM_DIR/alias/default")
+  # Resolve alias chain (lts/*, node, etc.)
+  while [[ ! -d "$NVM_DIR/versions/node/$DEFAULT_NODE_VER" ]] && [[ -f "$NVM_DIR/alias/$DEFAULT_NODE_VER" ]]; do
+    DEFAULT_NODE_VER=$(cat "$NVM_DIR/alias/$DEFAULT_NODE_VER")
+  done
   [[ "$DEFAULT_NODE_VER" == "node" ]] && DEFAULT_NODE_VER=$(ls -1 "$NVM_DIR/versions/node" | sort -V | tail -1)
-  export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VER/bin:$PATH"
+  [[ -d "$NVM_DIR/versions/node/$DEFAULT_NODE_VER" ]] && export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VER/bin:$PATH"
 fi
 nvm() {
   unset -f nvm
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   nvm "$@"
 }
 
@@ -44,8 +48,8 @@ setopt interactive_comments   # Allow comments in interactive shell
 unsetopt beep
 
 # === Environment Variables ===
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR='nvim'
+export VISUAL='nvim'
 export PAGER='less'
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -165,3 +169,11 @@ mkcd() {
 
 # === Local Overrides ===
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+eval "$(zoxide init zsh)"
+
+# Keep Brewfile updated on upgrade
+alias brewup="brew update && brew upgrade && brew bundle dump --file=~/.config/homebrew/Brewfile --force"
+
+# Workspace setup
+alias sup-work="~/.config/zsh/setup-workspace.sh"
