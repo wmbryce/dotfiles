@@ -71,10 +71,10 @@ zstyle ':completion:*:warnings' format 'No matches for: %d'
 zstyle ':completion:*' group-name ''
 
 # === Key Bindings ===
-bindkey -e                              # Emacs keybindings
-bindkey '^[[A' history-search-backward  # Up arrow: search history backward
-bindkey '^[[B' history-search-forward   # Down arrow: search history forward
-bindkey '^R' history-incremental-search-backward
+bindkey -v
+export KEYTIMEOUT=1
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
 
 # === Aliases ===
 # Navigation (macOS compatible)

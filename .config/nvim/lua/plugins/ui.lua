@@ -2,13 +2,6 @@ return {
   {
     "christoomey/vim-tmux-navigator",
     lazy = false,
-    cmd = {
-      "TmuxNavigateLeft",
-      "TmuxNavigateDown",
-      "TmuxNavigateUp",
-      "TmuxNavigateRight",
-      "TmuxNavigatePrevious",
-    },
     keys = {
       { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
       { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
@@ -18,14 +11,18 @@ return {
     },
   },
   {
+    "LazyVim/LazyVim",
+    opts = { colorscheme = "catppuccin" },
+  },
+  {
     "catppuccin/nvim",
     name = "catppuccin",
     priority = 1000,
   },
   {
     "shaunsingh/nord.nvim",
-    options = {
-      contrast = "true",
+    opts = {
+      contrast = true,
     },
   },
   {

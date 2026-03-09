@@ -3,6 +3,12 @@
     "context": "Workspace",
     "bindings": {
       "space w |": "pane::SplitRight",
+      "space w x": "pane::CloseActiveItem",
+    },
+  },
+  {
+    "context": "Dock || Terminal || Editor || Workspace",
+    "bindings": {
       "ctrl-h": "workspace::ActivatePaneLeft",
       "ctrl-l": "workspace::ActivatePaneRight",
       "ctrl-j": "workspace::ActivatePaneDown",
@@ -16,19 +22,13 @@
   {
     "context": "Picker > Editor",
     "bindings": {
-      "ctrl-backspace": "editor::Backspace"
-    }
+      "ctrl-backspace": "editor::Backspace",
+    },
   },
   {
     "context": "vim_mode == literal",
     "bindings": {
-      "ctrl-backspace": [
-        "vim::Literal",
-        [
-          "ctrl-h",
-          "\b"
-        ]
-      ]
-    }
-  }
+      "ctrl-backspace": ["vim::Literal", ["ctrl-h", "\b"]],
+    },
+  },
 ]

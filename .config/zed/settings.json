@@ -7,9 +7,12 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "edit_predictions": {
+    "provider": "ollama",
+  },
   "agent": {
     "dock": "right",
-    "model_parameters": []
+    "model_parameters": [],
   },
   "icon_theme": "Catppuccin Macchiato",
   "buffer_font_family": "JetBrainsMonoNL Nerd Font Propo",
@@ -21,12 +24,12 @@
   "theme": {
     "mode": "system",
     "light": "Catppuccin Macchiato",
-    "dark": "One Dark"
+    "dark": "One Dark",
   },
   "project_panel": {
-    "indent_size": 8
+    "indent_size": 8,
   },
   "features": {
-    "edit_prediction_provider": "zed"
-  }
+    "edit_prediction_provider": "zed",
+  },
 }

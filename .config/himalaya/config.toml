@@ -1,0 +1,20 @@
+display-name = "Michael Bryce"
+signature = "Michael"
+
+[accounts.gmail]
+default = true
+email = "michael@steppingblocks.com"
+
+backend.type = "imap"
+backend.host = "imap.gmail.com"
+backend.port = 993
+backend.login = "michael@steppingblocks.com"
+backend.auth.type = "password"
+backend.auth.raw = "pdon zgpg njns pufa"
+
+message.send.backend.type = "smtp"
+message.send.backend.host = "smtp.gmail.com"
+message.send.backend.port = 465
+message.send.backend.login = "michael@steppingblocks.com"
+message.send.backend.auth.type = "password"
+message.send.backend.auth.raw = "pdon zgpg njns pufa"
