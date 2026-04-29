@@ -9,6 +9,9 @@ return {
         "shellcheck",
         "shfmt",
         "css-lsp",
+        "goimports",
+        "gofumpt",
+        "golangci-lint",
       })
     end,
   },
@@ -17,9 +20,35 @@ return {
   {
     "neovim/nvim-lspconfig",
     opts = {
-      inlay_hints = { enabled = false },
+      inlay_hints = { enabled = false }, -- enabled per-lang via gopls hints config
       ---@type lspconfig.options
       servers = {
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+              analyses = {
+                unusedparams = true,
+                unusedvariable = true,
+                shadow = true,
+                nilness = true,
+                useany = true,
+              },
+              staticcheck = true,
+              usePlaceholders = true,
+              completeUnimported = true,
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+            },
+          },
+        },
         cssls = {},
         tailwindcss = {
           root_dir = function(...)
@@ -62,7 +91,7 @@ return {
       formatters_by_ft = {
         lua = { "stylua" },
         -- Conform will run multiple formatters sequentially
-        go = { "goimports", "gofmt" },
+        go = { "goimports", "gofumpt" },
         -- Use a sub-list to run only the first available formatter
         javascript = { "prettier" },
         typescript = { "prettier" },
