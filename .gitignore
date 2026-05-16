@@ -72,3 +72,6 @@ Pods/
 
 # Karabiner
 .config/karabiner/automatic_backups
+
+# Raycast extensions (managed by Raycast)
+.config/raycast/extensions

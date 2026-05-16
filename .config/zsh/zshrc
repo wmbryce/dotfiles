@@ -139,6 +139,9 @@ source <(fzf --zsh)
 # === Prompt (Starship) ===
 eval "$(starship init zsh)"
 
+# === Zoxide ===
+eval "$(zoxide init zsh)"
+
 # === Custom Functions ===
 # Extract various compressed file types
 extract() {
