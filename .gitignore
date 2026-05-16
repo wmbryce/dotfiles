@@ -75,3 +75,6 @@ Pods/
 
 # Raycast extensions (managed by Raycast)
 .config/raycast/extensions
+
+# Yarn global install cache (managed by yarn, not part of dotfiles)
+.config/yarn/global
