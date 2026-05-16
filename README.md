@@ -1,83 +1,80 @@
 # Personal Dotfiles
 
-This repository contains my personal configuration files (dotfiles) for various tools and applications I use in my development environment.
-These configurations are tailored to my workflow and preferences, primarily focusing on tmux, Neovim, and the fish shell.
+My personal configuration for a terminal-first development environment built around **zsh + tmux + Neovim**, tuned for agentic dev workflows (Claude Code, multi-pane sessions, fast shell startup).
 
 ## Overview
 
-- **Neovim**: Configured with Lazy.nvim as the package manager and Catppuccin as the color scheme.
-- **tmux**: Using TPM (Tmux Plugin Manager) for plugin management and Catppuccin for theming.
-- **Fish Shell**: Utilizing Fisher for plugin management and a customized version of the Starship prompt.
-- nvm: For managing Node.js versions
-- pyenv: For managing Python versions
+| Tool | Role |
+| --- | --- |
+| **zsh** | Primary shell, with lazy-loaded `nvm` for fast startup |
+| **Starship** | Cross-shell prompt |
+| **tmux** | Terminal multiplexer, TPM-managed plugins, Catppuccin theme |
+| **Neovim** | Editor, built on [LazyVim](https://www.lazyvim.org/) |
+| **Ghostty** | Primary terminal emulator (iTerm2 config kept as fallback) |
+| **Zed** | GUI editor for when Neovim isn't the right tool |
+| **Raycast** | Launcher (settings only — extensions are gitignored) |
+| **Karabiner** | Keyboard remapping on macOS |
+| **gh / glab** | GitHub & GitLab CLIs |
+
+`fish`, `doom.d`, `emacs`, `himalaya`, `yarn`, and a few others remain in `.config/` as leftovers or occasional tools but aren't part of the active daily setup.
 
 ## Installation
 
-- Clone the repository to your home directory
+Clone into `~/dotfiles`, then run the setup script:
 
-- Symlink the .config file to your home directory
-  `ln -s ~/dotfiles/.config ~/.config`
+```sh
+git clone <this-repo> ~/dotfiles
+cd ~/dotfiles/.config
+./setup.sh
+```
 
-- Install [Fish](https://fishshell.com/docs/current/install.html)
-  `brew install fish`
+`setup.sh` symlinks every directory under `.config/` into `~/.config/`, links `zsh/zshrc` → `~/.zshrc`, and links `tmux/plugins` → `~/.tmux/plugins`. Existing files at those paths are replaced.
 
-- Install [Fisher](https://github.com/jorgebucaran/fisher)
-  `curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher`
+### Dependencies
 
-- Install [Starship](https://starship.rs/)
-  `brew install starship`
+```sh
+brew install zsh starship tmux neovim gh glab ghostty
+```
 
-- Make fish your default shell
-  `echo /usr/local/bin/fish | sudo tee -a /etc/shells`
-  `chsh -s /usr/local/bin/fish`
-
-
-- Install [Neovim](https://github.com/neovim/neovim/wiki/Installing-Neovim)
-  `brew install neovim`
-
-- Install [tmux](https://github.com/tmux/tmux/wiki)
-  `brew install tmux`
-  - Install [tpm](https://github.com/tmux-plugins/tpm)
-  `brew install tpm`
-
-
-- Install [nvm](https://github.com/nvm-sh/nvm) and [pyenv](https://github.com/pyenv/pyenv)
-- Symlink the .config directory to your home directory
--`ln -s ./.config ~/.config`
--
+- Make zsh your default shell: `chsh -s /opt/homebrew/bin/zsh`
+- Install [TPM](https://github.com/tmux-plugins/tpm) (the `tmux/plugins` symlink expects it on disk)
+- Install [nvm](https://github.com/nvm-sh/nvm) for Node version management
+- First Neovim launch will trigger LazyVim to install plugins
+- Inside tmux, run `prefix + I` to install plugins via TPM
 
 ## Components
 
-### Neovim
+### Neovim (`nvim/`)
+LazyVim distribution with project-local customisations under `lua/`. `lazy-lock.json` pins plugin versions for reproducible setups.
 
-My Neovim configuration uses Lazy.nvim for efficient plugin management. Key features include:
+### tmux (`tmux/`)
+`tmux.conf` plus a `macos.conf` overlay. Plugins managed by TPM; theme is Catppuccin to match Neovim. Layout/keybinds are tuned for running Claude Code and dev servers side-by-side.
 
-- Catppuccin color scheme for a pleasant coding experience
-- Currently using supermaven for completions
-- TS extension for TypeScript
+### zsh (`zsh/zshrc`)
+- Auto-attaches to a `default` tmux session on interactive login (skipped inside VS Code)
+- Lazy-loaded `nvm` — resolves the default Node version up front so `node`/`npm` work without paying nvm's full init cost
+- Standard git/ls aliases, large shared history, vi keytimeout tweaks
+- Starship prompt sourced from `.config/starship.toml`
 
-### tmux
+### Ghostty (`ghostty/`)
+Primary terminal emulator config + custom themes.
 
-The tmux configuration includes:
+### Zed (`zed/`)
+`settings.json`, `keymap.json`, custom prompts and themes.
 
-- TPM for managing tmux plugins
-- Catppuccin theme for visual consistency with Neovim
+### Git / GitHub / GitLab
+- `git/` — global gitconfig
+- `gh/` — GitHub CLI config and hosts
+- `glab-cli/` — GitLab CLI config and aliases
 
-### Fish Shell
+### Raycast (`raycast/`)
+Raycast settings and AI config. The `extensions/` subdirectory is gitignored — those binaries are managed by Raycast itself.
 
-Fish shell is set up with:
-
-- Fisher for plugin management
-- A customized Starship prompt for an informative and attractive command line
+### Karabiner (`karabiner/`)
+Keyboard remapping rules. Automatic backups are gitignored.
 
 ## Acknowledgments
 
-This configuration was greatly influenced by:
-
+Originally influenced by:
 - [craftzdog's dotfiles](https://github.com/craftzdog/dotfiles-public)
 - [Dreams of Code dotfiles](https://github.com/dreamsofcode-io/dotfiles)
-
-## Personal Notes
-
-*[You can add any personal notes, TODO items, or future plans for your dotfiles here]*
-
