@@ -81,3 +81,6 @@ Pods/
 
 # Yarn global install cache (managed by yarn, not part of dotfiles)
 .config/yarn/global
+
+# glab-cli stores live tokens here — never track
+.config/glab-cli/config.yml
