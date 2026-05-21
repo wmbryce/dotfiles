@@ -1,0 +1,42 @@
+# Linux packages installed by bootstrap-linux.sh.
+# Lines starting with # and blank lines are ignored.
+# Names use Debian/Ubuntu apt naming; the script maps a handful for dnf/pacman.
+
+# core shell + editor + multiplexer
+zsh
+tmux
+neovim
+git
+curl
+wget
+ca-certificates
+build-essential
+unzip
+
+# clipboard (X11 + Wayland)
+xclip
+wl-clipboard
+
+# search / nav
+fzf
+ripgrep
+fd-find
+zoxide
+
+# nice-to-haves used by zshrc/tmux/nvim
+bat
+jq
+htop
+tree
+
+# git tooling
+gh
+git-delta
+
+# language toolchains we use a lot
+golang-go
+python3
+python3-pip
+python3-venv
+
+# starship + nvm + glab + linear-cli are installed via curl/script in bootstrap-linux.sh

@@ -5,8 +5,18 @@ if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ -t 0 ]] && [[ -t 1 ]] &
   tmux attach -t default 2>/dev/null || tmux new -s default
 fi
 
+# === Homebrew prefix detection (mac arm / mac intel / linuxbrew) ===
+if [[ -d /opt/homebrew ]]; then
+  BREW_PREFIX=/opt/homebrew
+elif [[ -d /home/linuxbrew/.linuxbrew ]]; then
+  BREW_PREFIX=/home/linuxbrew/.linuxbrew
+elif [[ -d /usr/local/Homebrew ]]; then
+  BREW_PREFIX=/usr/local
+fi
+[[ -n "$BREW_PREFIX" ]] && eval "$($BREW_PREFIX/bin/brew shellenv)" 2>/dev/null
+
 # === PATH Configuration (consolidated) ===
-export PATH="$HOME/.local/bin:$HOME/go/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
 
 # === NVM (lazy loaded for fast startup) ===
 export NVM_DIR="$HOME/.nvm"
@@ -77,8 +87,7 @@ bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
 
 # === Aliases ===
-# Navigation (macOS compatible)
-alias ls='ls -G'
+# Navigation (ls colour flag set per-OS at bottom of file)
 alias ll='ls -lah'
 alias la='ls -lah'
 alias lt='ls -ltr'
@@ -124,9 +133,10 @@ if [[ $commands[kubectl] ]]; then
 fi
 
 # === Plugins (zplug) ===
-export ZPLUG_HOME=/opt/homebrew/opt/zplug
-if [[ -f $ZPLUG_HOME/init.zsh ]]; then
-  source $ZPLUG_HOME/init.zsh
+[[ -n "$BREW_PREFIX" && -d "$BREW_PREFIX/opt/zplug" ]] && export ZPLUG_HOME="$BREW_PREFIX/opt/zplug"
+[[ -z "$ZPLUG_HOME" && -d "$HOME/.zplug" ]] && export ZPLUG_HOME="$HOME/.zplug"
+if [[ -n "$ZPLUG_HOME" && -f "$ZPLUG_HOME/init.zsh" ]]; then
+  source "$ZPLUG_HOME/init.zsh"
   zplug "zsh-users/zsh-syntax-highlighting", defer:2
   zplug "zsh-users/zsh-autosuggestions", defer:2
   zplug "zsh-users/zsh-completions", defer:2
@@ -134,13 +144,17 @@ if [[ -f $ZPLUG_HOME/init.zsh ]]; then
 fi
 
 # === FZF ===
-source <(fzf --zsh)
+if command -v fzf &>/dev/null; then
+  if fzf --zsh &>/dev/null; then
+    source <(fzf --zsh)
+  elif [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
+    source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+  fi
+fi
 
 # === Prompt (Starship) ===
-eval "$(starship init zsh)"
-
-# === Zoxide ===
-eval "$(zoxide init zsh)"
+command -v starship &>/dev/null && eval "$(starship init zsh)"
 
 # === Custom Functions ===
 # Extract various compressed file types
@@ -173,10 +187,28 @@ mkcd() {
 # === Local Overrides ===
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-eval "$(zoxide init zsh)"
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
 
-# Keep Brewfile updated on upgrade
-alias brewup="brew update && brew upgrade && brew bundle dump --file=~/.config/homebrew/Brewfile --force"
+# === Platform-specific aliases ===
+case "$(uname -s)" in
+  Darwin)
+    alias ls='ls -G'
+    # Keep Brewfile updated on upgrade (mac-only path)
+    alias brewup="brew update && brew upgrade && brew bundle dump --file=~/.config/homebrew/Brewfile --force"
+    ;;
+  Linux)
+    alias ls='ls --color=auto'
+    alias open='xdg-open'
+    # pbcopy/pbpaste shims so muscle memory works
+    if command -v wl-copy &>/dev/null; then
+      alias pbcopy='wl-copy'
+      alias pbpaste='wl-paste'
+    elif command -v xclip &>/dev/null; then
+      alias pbcopy='xclip -selection clipboard'
+      alias pbpaste='xclip -selection clipboard -o'
+    fi
+    ;;
+esac
 
 # Workspace setup
 alias sup-work="~/.config/zsh/setup-workspace.sh"
