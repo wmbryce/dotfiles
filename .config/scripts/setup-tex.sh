@@ -3,7 +3,7 @@
 # installer, which symlinks everything into ~/.claude/.
 set -euo pipefail
 
-TEX_REPO="${TEX_REPO:-https://github.com/wmbryce/tex.git}"
+TEX_REPO="${TEX_REPO:-git@github.com:wmbryce/tex.git}"
 TEX_DIR="${TEX_DIR:-$HOME/tex}"
 
 if [[ ! -d "$TEX_DIR" ]]; then
