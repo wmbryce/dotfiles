@@ -71,7 +71,7 @@ if [[ "${SKIP_PKG:-}" != "1" ]]; then
   case "$PKG" in
     apt)
       $SUDO apt-get update
-      $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y "${pkgs[@]}"
+      $SUDO env DEBIAN_FRONTEND=noninteractive apt-get install -y "${pkgs[@]}"
       ;;
     dnf)
       $SUDO dnf install -y "${pkgs[@]}"
@@ -107,16 +107,37 @@ if [[ ! -d "$HOME/.zplug" ]]; then
 fi
 
 # -- glab (gitlab cli) -------------------------------------------------------
+# Optional tool; never let a failure here abort the bootstrap. glab is packaged
+# in apt (Ubuntu 24.04+), dnf and pacman; fall back to the GitHub release tarball
+# everywhere else.
 if ! command -v glab &>/dev/null; then
   echo "==> installing glab"
-  case "$PKG" in
-    apt)
-      curl -fsSL https://gitlab.com/gitlab-org/cli/-/raw/main/scripts/install.sh | $SUDO bash
-      ;;
-    *)
-      echo "   skipped (install glab manually for $PKG)"
-      ;;
-  esac
+  install_glab() {
+    case "$PKG" in
+      apt)    $SUDO apt-get install -y glab && return 0 ;;
+      dnf)    $SUDO dnf install -y glab && return 0 ;;
+      pacman) $SUDO pacman -S --needed --noconfirm glab && return 0 ;;
+    esac
+    # Fallback: download the latest release tarball from gitlab.com.
+    local arch ver tmp
+    case "$(uname -m)" in
+      x86_64)  arch="x86_64" ;;
+      aarch64) arch="arm64" ;;
+      *) echo "   no glab build for $(uname -m); skipping"; return 1 ;;
+    esac
+    ver="$(curl -fsSL 'https://gitlab.com/api/v4/projects/gitlab-org%2Fcli/releases/permalink/latest' 2>/dev/null \
+            | grep -oP '"tag_name":"v?\K[^"]+' | head -1)"
+    [[ -z "$ver" ]] && { echo "   could not resolve latest glab version; skipping"; return 1; }
+    tmp="$(mktemp -d)"
+    if curl -fsSL "https://gitlab.com/gitlab-org/cli/-/releases/v${ver}/downloads/glab_${ver}_linux_${arch}.tar.gz" \
+         -o "$tmp/glab.tar.gz" && tar -xzf "$tmp/glab.tar.gz" -C "$tmp"; then
+      mkdir -p "$HOME/.local/bin"
+      install -m 0755 "$(find "$tmp" -name glab -type f | head -1)" "$HOME/.local/bin/glab"
+      rm -rf "$tmp"; return 0
+    fi
+    rm -rf "$tmp"; return 1
+  }
+  install_glab || echo "   glab install failed; install it manually later (non-fatal)."
 fi
 
 # -- fd symlink: Debian ships /usr/bin/fdfind ---------------------------------
@@ -147,10 +168,20 @@ fi
 bash "$DOTFILES/scripts/install-plugins.sh"
 
 # -- gh auth ------------------------------------------------------------------
-# Interactive; needed before cloning private repos (tex).
-bash "$DOTFILES/scripts/auth-github.sh"
+# Interactive; needed before cloning private repos (tex). Non-fatal and
+# skippable so an unattended VPS bootstrap still completes (set SKIP_AUTH=1).
+if [[ "${SKIP_AUTH:-}" == "1" ]]; then
+  echo "==> skipping gh auth (SKIP_AUTH=1)"
+else
+  bash "$DOTFILES/scripts/auth-github.sh" || echo "   gh auth skipped/failed (non-fatal)."
+fi
 
 # -- tex repo (AI config) -----------------------------------------------------
-bash "$DOTFILES/scripts/setup-tex.sh"
+# Needs gh auth for the private clone; non-fatal and skippable (SKIP_TEX=1).
+if [[ "${SKIP_TEX:-}" == "1" ]]; then
+  echo "==> skipping tex setup (SKIP_TEX=1)"
+else
+  bash "$DOTFILES/scripts/setup-tex.sh" || echo "   tex setup skipped/failed (non-fatal)."
+fi
 
 echo "==> done. Open a new shell."
