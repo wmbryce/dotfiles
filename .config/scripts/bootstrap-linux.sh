@@ -146,13 +146,9 @@ if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
   ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
 fi
 
-# -- TPM (tmux plugin manager) -----------------------------------------------
-if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
-  echo "==> installing TPM"
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
-fi
-
 # -- symlink configs ----------------------------------------------------------
+# Note: TPM is cloned by install-plugins.sh *after* this — link.sh resets
+# ~/.tmux/plugins, so cloning TPM before linking would just be wiped.
 echo "==> symlinking config"
 bash "$DOTFILES/scripts/link.sh"
 

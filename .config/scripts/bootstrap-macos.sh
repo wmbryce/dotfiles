@@ -27,31 +27,25 @@ brew bundle --file="$DOTFILES/homebrew/Brewfile"
 echo "==> symlinking config"
 bash "$DOTFILES/scripts/link.sh"
 
-# 4. TPM (tmux plugin manager)
-if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
-  echo "==> installing TPM"
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
-fi
-
-# 5. nvm
+# 4. nvm
 if [[ ! -d "$HOME/.nvm" ]]; then
   echo "==> installing nvm"
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 fi
 
-# 6. Default shell — zsh ships with macOS, just point at it
+# 5. Default shell — zsh ships with macOS, just point at it
 if [[ "$SHELL" != *zsh ]]; then
   echo "==> changing default shell to zsh"
   chsh -s "$(command -v zsh)"
 fi
 
-# 7. tmux + nvim plugins
+# 6. tmux + nvim plugins
 bash "$DOTFILES/scripts/install-plugins.sh"
 
-# 8. gh auth — interactive; needed before cloning private repos (tex)
+# 7. gh auth — interactive; needed before cloning private repos (tex)
 bash "$DOTFILES/scripts/auth-github.sh"
 
-# 9. tex repo (AI config: CLAUDE.md, skills, commands → ~/.claude/)
+# 8. tex repo (AI config: CLAUDE.md, skills, commands → ~/.claude/)
 bash "$DOTFILES/scripts/setup-tex.sh"
 
 echo "==> done. Open a new shell."
