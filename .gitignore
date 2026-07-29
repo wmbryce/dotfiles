@@ -92,3 +92,8 @@ Pods/
 
 # rclone stores live OAuth tokens here — never track
 .config/rclone/rclone.conf
+
+# Claude Code runtime state — ~/.claude symlinks here. Config lives in tex
+# (CLAUDE.md, settings.json, skills/, commands/ are symlinks into ~/tex).
+# Everything else is session transcripts, caches, and auth state.
+.claude/
