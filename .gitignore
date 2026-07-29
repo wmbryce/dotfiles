@@ -89,3 +89,6 @@ Pods/
 .config/herdr/*.sock
 .config/herdr/session.json
 .config/herdr/.plugins.lock
+
+# rclone stores live OAuth tokens here — never track
+.config/rclone/rclone.conf
