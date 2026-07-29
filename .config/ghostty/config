@@ -1,2 +1,7 @@
 theme = catppuccin-mocha.conf
 font-family = "JetBrainsMono Nerd Font"
+
+# Match tmux's wcwidth-based glyph widths. Without this, Ghostty (default
+# `unicode`) and tmux disagree on the width of spinner/box-drawing/emoji glyphs,
+# drifting the cursor and smearing full-screen TUIs like Claude Code.
+grapheme-width-method = legacy
