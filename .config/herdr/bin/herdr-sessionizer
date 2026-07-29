@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Herdr sessionizer — fzf a project dir, then focus or create its workspace.
+# Port of ~/.local/bin/tmux-sessionizer (tmux sessions -> herdr workspaces).
+
+set -uo pipefail
+
+SEARCH_DIRS=(
+  ~/repos
+  ~/projects
+  ~/work
+  ~/.config
+)
+
+DIRS=()
+for d in "${SEARCH_DIRS[@]}"; do
+  [[ -d "$d" ]] && DIRS+=("$d")
+done
+
+if [[ ${#DIRS[@]} -eq 0 ]]; then
+  echo "No search directories found"
+  exit 1
+fi
+
+selected=$(find "${DIRS[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
+
+if [[ -z "$selected" ]]; then
+  exit 0
+fi
+
+label=$(basename "$selected" | tr . _)
+
+existing=$(herdr workspace list |
+  jq -r --arg l "$label" 'first(.result.workspaces[] | select(.label == $l) | .workspace_id) // empty')
+
+if [[ -n "$existing" ]]; then
+  herdr workspace focus "$existing" >/dev/null
+else
+  herdr workspace create --cwd "$selected" --label "$label" --focus >/dev/null
+fi

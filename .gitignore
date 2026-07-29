@@ -84,3 +84,8 @@ Pods/
 
 # glab-cli stores live tokens here — never track
 .config/glab-cli/config.yml
+
+# herdr runtime state (server writes sockets/session state into its config dir)
+.config/herdr/*.sock
+.config/herdr/session.json
+.config/herdr/.plugins.lock

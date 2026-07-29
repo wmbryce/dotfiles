@@ -1,0 +1,70 @@
+# herdr configuration
+# Mirrors ~/.config/tmux/tmux.conf wherever herdr has an equivalent.
+# `herdr config check` validates this file; `prefix+r` reloads it.
+
+[theme]
+name = "catppuccin"
+auto_switch = false
+
+[terminal]
+# tmux: splits/windows inherit #{pane_current_path}
+new_cwd = "follow"
+
+[keys]
+# tmux: set-option -g prefix `
+prefix = "backtick"
+
+# --- tmux muscle memory -------------------------------------------------
+detach = "prefix+d"                        # tmux default prefix+d
+reload_config = "prefix+r"                 # tmux: bind r source-file
+resize_mode = "prefix+ctrl+r"              # tmux used prefix+C-{h,j,k,l}; herdr enters a mode, then hjkl
+split_vertical = "prefix+shift+backslash"  # tmux: bind | split-window -h
+split_horizontal = "prefix+minus"          # tmux: bind - split-window -v
+rename_tab = "prefix+comma"                # tmux default prefix+,
+close_tab = "prefix+ampersand"             # tmux default prefix+&
+open_notification_target = ""              # freed up so prefix+o can open Finder (below)
+
+# Defaults already matching tmux, left implicit:
+#   new_tab = "prefix+c", next_tab = "prefix+n", previous_tab = "prefix+p",
+#   switch_tab = "prefix+1..9", close_pane = "prefix+x", zoom = "prefix+z"
+#
+# No herdr equivalent for: vim-tmux-navigator (bare ctrl+hjkl pane nav — herdr
+# needs the prefix: prefix+h/j/k/l), tmux-thumbs, `bind e kill-pane -a`,
+# C-S-Left/Right window swap.
+
+# tmux: bind o run-shell "open #{pane_current_path}"
+[[keys.command]]
+key = "prefix+o"
+type = "shell"
+command = "open ."
+
+# tmux: bind C-f display-popup -E -w 80% -h 80%
+[[keys.command]]
+key = "prefix+ctrl+f"
+type = "popup"
+command = "zsh -l"
+width = "80%"
+height = "80%"
+
+# tmux: bind f run-shell "tmux neww ~/.local/bin/tmux-sessionizer"
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = "~/.config/herdr/bin/herdr-sessionizer"
+width = "80%"
+height = "60%"
+
+# tmux: bind C-a command-prompt -p "agent name:" "new-window -n '%%' 'claude'"
+[[keys.command]]
+key = "prefix+ctrl+a"
+type = "popup"
+command = "~/.config/herdr/bin/herdr-agent-tab"
+width = "50%"
+height = "20%"
+
+[ui]
+agent_panel_sort = "priority"
+
+[advanced]
+# tmux: set -g history-limit 100000
+scrollback_limit_bytes = 20000000

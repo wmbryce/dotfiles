@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# New tab running an agent — port of tmux's
+#   bind C-a command-prompt -p "agent name:" "new-window -n '%%' 'claude'"
+
+set -uo pipefail
+
+read -r -p "agent name: " name
+name="${name:-claude}"
+
+pane=$(herdr tab create --label "$name" --focus |
+  jq -r '.result.root_pane.pane_id // empty')
+
+if [[ -z "$pane" ]]; then
+  echo "failed to create tab" >&2
+  exit 1
+fi
+
+herdr agent start "$name" --kind claude --pane "$pane" >/dev/null

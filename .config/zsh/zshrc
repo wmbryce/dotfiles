@@ -1,8 +1,12 @@
 # .zshrc - Z Shell configuration file
 
-# === Tmux Auto-attach ===
-if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ -t 0 ]] && [[ -t 1 ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
-  tmux attach -t default 2>/dev/null || tmux new -s default
+# === Multiplexer auto-attach ===
+# Disabled — start a multiplexer explicitly (`herdr` / `tmux`) instead of on
+# every new terminal window. Set HERDR_AUTOSTART=1 to opt back in for herdr.
+if [[ -n "${HERDR_AUTOSTART:-}" ]] && command -v herdr &>/dev/null \
+  && [[ -z "${HERDR_PANE_ID:-}" ]] && [[ -z "${TMUX:-}" ]] && [[ -t 0 ]] && [[ -t 1 ]] \
+  && [[ "$TERM_PROGRAM" != "vscode" ]]; then
+  exec herdr
 fi
 
 # === Homebrew prefix detection (mac arm / mac intel / linuxbrew) ===
