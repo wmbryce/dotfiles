@@ -2,33 +2,27 @@
 
 # Herdr sessionizer — fzf a project dir, then focus or create its workspace.
 # Port of ~/.local/bin/tmux-sessionizer (tmux sessions -> herdr workspaces).
+# Project discovery is shared with the tmux version via list-projects.sh.
 
 set -uo pipefail
 
-SEARCH_DIRS=(
-  ~/repos
-  ~/projects
-  ~/work
-  ~/.config
-)
+candidates=$(~/.config/scripts/list-projects.sh)
+[[ -z "$candidates" ]] && { echo "No project directories found"; exit 1; }
 
-DIRS=()
-for d in "${SEARCH_DIRS[@]}"; do
-  [[ -d "$d" ]] && DIRS+=("$d")
-done
+selected=$(sed "s|^$HOME|~|" <<<"$candidates" | fzf --prompt='project> ' --height=100%)
+[[ -z "$selected" ]] && exit 0
+selected="${selected/#\~/$HOME}"
 
-if [[ ${#DIRS[@]} -eq 0 ]]; then
-  echo "No search directories found"
-  exit 1
+# Basenames collide across roots (frontend/auth-lambda vs serverless/auth-lambda)
+# and the lookup below matches on label — so qualify ambiguous names with their
+# parent dir, otherwise selecting one focuses the other's workspace.
+base=$(basename "$selected")
+if (( $(grep -c "/${base}\$" <<<"$candidates") > 1 )); then
+  label="$(basename "$(dirname "$selected")")-${base}"
+else
+  label="$base"
 fi
-
-selected=$(find "${DIRS[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
-
-if [[ -z "$selected" ]]; then
-  exit 0
-fi
-
-label=$(basename "$selected" | tr . _)
+label="${label//./_}"
 
 existing=$(herdr workspace list |
   jq -r --arg l "$label" 'first(.result.workspaces[] | select(.label == $l) | .workspace_id) // empty')

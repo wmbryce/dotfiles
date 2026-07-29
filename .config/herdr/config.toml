@@ -18,11 +18,17 @@ prefix = "backtick"
 detach = "prefix+d"                        # tmux default prefix+d
 reload_config = "prefix+r"                 # tmux: bind r source-file
 resize_mode = "prefix+ctrl+r"              # tmux used prefix+C-{h,j,k,l}; herdr enters a mode, then hjkl
-split_vertical = "prefix+shift+backslash"  # tmux: bind | split-window -h
+split_vertical = "prefix+backslash"        # tmux: bind | split-window -h (same key, unshifted)
 split_horizontal = "prefix+minus"          # tmux: bind - split-window -v
 rename_tab = "prefix+comma"                # tmux default prefix+,
-close_tab = "prefix+ampersand"             # tmux default prefix+&
+close_tab = "prefix+shift+x"               # tmux default prefix+& (see note below)
 open_notification_target = ""              # freed up so prefix+o can open Finder (below)
+edit_scrollback = "prefix+shift+e"         # off prefix+e, which is kill-other-panes in tmux
+
+# tmux's exact keys here are shifted punctuation (prefix+| and prefix+&), which
+# herdr's own docs call unreliable — so both use the nearest reliable key.
+# Untested either way; swap back to "prefix+shift+backslash" / "prefix+ampersand"
+# if they turn out to register fine on this terminal.
 
 # Defaults already matching tmux, left implicit:
 #   new_tab = "prefix+c", next_tab = "prefix+n", previous_tab = "prefix+p",
@@ -32,11 +38,15 @@ open_notification_target = ""              # freed up so prefix+o can open Finde
 # needs the prefix: prefix+h/j/k/l), tmux-thumbs, `bind e kill-pane -a`,
 # C-S-Left/Right window swap.
 
+# Custom commands run via `zsh -lc` on purpose: herdr execs the command string
+# directly (no shell) on unix, so a bare "~/..." path is not tilde-expanded and
+# the process inherits no login PATH — which the scripts need for jq/fzf.
+
 # tmux: bind o run-shell "open #{pane_current_path}"
 [[keys.command]]
 key = "prefix+o"
 type = "shell"
-command = "open ."
+command = "zsh -lc ~/.config/herdr/bin/herdr-open-cwd"
 
 # tmux: bind C-f display-popup -E -w 80% -h 80%
 [[keys.command]]
@@ -50,7 +60,7 @@ height = "80%"
 [[keys.command]]
 key = "prefix+f"
 type = "popup"
-command = "~/.config/herdr/bin/herdr-sessionizer"
+command = "zsh -lc ~/.config/herdr/bin/herdr-sessionizer"
 width = "80%"
 height = "60%"
 
@@ -58,7 +68,7 @@ height = "60%"
 [[keys.command]]
 key = "prefix+ctrl+a"
 type = "popup"
-command = "~/.config/herdr/bin/herdr-agent-tab"
+command = "zsh -lc ~/.config/herdr/bin/herdr-agent-tab"
 width = "50%"
 height = "20%"
 

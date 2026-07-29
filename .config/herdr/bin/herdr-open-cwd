@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Open the focused pane's directory in the OS file manager.
+# Port of tmux's `bind o run-shell "open #{pane_current_path}"`.
+#
+# Queries the focused pane over the socket API rather than using $PWD: this runs
+# detached (keys.command type = "shell"), so its own cwd is herdr's process cwd,
+# not the pane's. `herdr pane current` is no good either — under a popup that
+# resolves to the popup's own pane.
+
+set -uo pipefail
+
+cwd=$(herdr pane list |
+  jq -r 'first(.result.panes[] | select(.focused) | (.foreground_cwd // .cwd)) // empty')
+
+[[ -z "$cwd" ]] && { echo "no focused pane" >&2; exit 1; }
+
+case "$(uname -s)" in
+  Darwin) open "$cwd" ;;
+  *) xdg-open "$cwd" ;;
+esac
